@@ -1,20 +1,17 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export default function Navbar() {
-  const linkClass = ({ isActive }) =>
-    `px-3 py-2 rounded-lg text-sm ${
-      isActive ? "font-semibold underline" : "text-gray-600 hover:text-black"
-    }`;
-
+const Navbar = () => {
   return (
-    <header className="border-b bg-white/70 backdrop-blur">
-      <div className="max-w-5xl mx-auto flex items-center justify-between p-4">
-        <Link to="/" className="text-xl font-bold">Recipe Finder</Link>
-        <nav className="hidden sm:flex items-center gap-2">
-          <NavLink to="/" className={linkClass} end>Home</NavLink>
-          <NavLink to="/recipe/1" className={linkClass}>Sample Recipe</NavLink>
-        </nav>
-      </div>
-    </header>
+    <nav className="bg-green-600 text-white px-6 py-4 flex justify-between items-center shadow-md">
+      <h1 className="text-2xl font-bold">RecipeFinder</h1>
+      <ul className="flex gap-6">
+        <li><Link to="/" className="hover:text-yellow-300">Home</Link></li>
+        <li><Link to="/search" className="hover:text-yellow-300">Search</Link></li>
+        <li><Link to="/random" className="hover:text-yellow-300">Random</Link></li>
+        <li><Link to="/favorites" className="hover:text-yellow-300">Favorites</Link></li>
+      </ul>
+    </nav>
   );
-}
+};
+
+export default Navbar;

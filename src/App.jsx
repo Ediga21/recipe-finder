@@ -1,19 +1,24 @@
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar.jsx";
-import HomePage from "./pages/HomePage.jsx";
-import RecipeDetails from "./pages/RecipeDetails.jsx";
+import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
+import Footer from "./components/Footer";
 
-export default function App() {
+const App = () => {
   return (
-    <div className="min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="max-w-5xl mx-auto p-4">
+      <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/recipe/:id" element={<RecipeDetails />} />
-          <Route path="*" element={<div>Not found</div>} />
+          <Route path="/" element={<Hero />} />
+          {/* placeholders for now */}
+          <Route path="/search" element={<h1 className="text-center mt-10 text-2xl">Search Page</h1>} />
+          <Route path="/random" element={<h1 className="text-center mt-10 text-2xl">Random Recipe</h1>} />
+          <Route path="/favorites" element={<h1 className="text-center mt-10 text-2xl">Favorites</h1>} />
         </Routes>
       </main>
+      <Footer />
     </div>
   );
-}
+};
+
+export default App;
