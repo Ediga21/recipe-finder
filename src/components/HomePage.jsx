@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
@@ -56,18 +56,9 @@ const HomePage = () => {
       <section className="my-10">
         <h2 className="text-xl font-semibold mb-4">Popular this week</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="border rounded-md p-4 text-center">
-            <div className="bg-gray-300 h-32 mb-2"></div>
-            <p>Pasta Recipe</p>
-          </div>
-          <div className="border rounded-md p-4 text-center">
-            <div className="bg-gray-300 h-32 mb-2"></div>
-            <p>Fried Rice Recipe</p>
-          </div>
-          <div className="border rounded-md p-4 text-center">
-            <div className="bg-gray-300 h-32 mb-2"></div>
-            <p>Cake Recipe</p>
-          </div>
+          {["52772", "52874", "52844"].map((id) => (
+            <PopularMeal key={id} id={id} />
+          ))}
         </div>
       </section>
 
@@ -75,15 +66,9 @@ const HomePage = () => {
       <section className="my-10">
         <h2 className="text-xl font-semibold mb-4">Categories</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="border rounded-md p-4 text-center">
-            🍔 <p>Breakfast</p>
-          </div>
-          <div className="border rounded-md p-4 text-center">
-            🐟 <p>Lunch</p>
-          </div>
-          <div className="border rounded-md p-4 text-center">
-            🍩 <p>Dinner</p>
-          </div>
+          <CategoryMeals name="Breakfast" apiCategory="Breakfast" emoji="🍔" />
+          <CategoryMeals name="Lunch" apiCategory="Seafood" emoji="🐟" />
+          <CategoryMeals name="Dinner" apiCategory="Beef" emoji="🍩" />
         </div>
       </section>
 
@@ -111,6 +96,75 @@ const HomePage = () => {
       )}
 
       <p className="text-center mt-8 font-medium">Ready to Cook?</p>
+    </div>
+  );
+};
+
+// ✅ Helper component for popular meals
+const PopularMeal = ({ id }) => {
+  const [meal, setMeal] = useState(null);
+
+  useEffect(() => {
+    fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
+      .then((res) => res.json())
+      .then((data) => setMeal(data.meals[0]));
+  }, [id]);
+
+  if (!meal)
+    return (
+      <div className="border rounded-md p-4 text-center">Loading...</div>
+    );
+
+  return (
+    <Link
+      to={`/recipe/${meal.idMeal}`}
+      className="border rounded-md p-4 text-center hover:shadow-lg transition"
+    >
+      <img
+        src={meal.strMealThumb}
+        alt={meal.strMeal}
+        className="h-32 w-full object-cover rounded-md mb-2"
+      />
+      <p>{meal.strMeal}</p>
+    </Link>
+  );
+};
+
+// ✅ Helper component for categories
+const CategoryMeals = ({ name, apiCategory, emoji }) => {
+  const [meals, setMeals] = useState([]);
+
+  useEffect(() => {
+    fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${apiCategory}`)
+      .then((res) => res.json())
+      .then((data) => setMeals(data.meals ? data.meals.slice(0, 3) : [])); // take 3 meals
+  }, [apiCategory]);
+
+  return (
+    <div className="border rounded-md p-4 text-center">
+      <h3 className="text-lg font-semibold mb-2">
+        {emoji} {name}
+      </h3>
+      {meals.length > 0 ? (
+        <div className="space-y-2">
+          {meals.map((meal) => (
+            <Link
+              key={meal.idMeal}
+              to={`/recipe/${meal.idMeal}`}
+              className="block hover:shadow-md transition rounded-md overflow-hidden"
+            >
+              <img
+                src={meal.strMealThumb}
+                alt={meal.strMeal}
+                className="h-24 w-full object-cover"
+              />
+              <p className="mt-1">{meal.strMeal}</p>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };
